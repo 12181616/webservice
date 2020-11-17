@@ -1,0 +1,121 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+require APPPATH . '/libraries/REST_Controller.php';
+use Restserver\Libraries\REST_Controller;
+
+class rumahsakit extends REST_Controller{
+
+    function __construct($config = "rest"){
+        parent::__construct($config);
+        $this->load->database();
+    }
+
+    public function index_get(){
+
+        $id = $this->get('id');
+        $rumahsakit=[];
+        if($id == ''){
+            $data = $this->db->get('penyakit')->result();
+            foreach($data as $row=>$key):
+                $rumahsakit[]=["penyakit"=>$key->penyakit,
+                            "COL 1"=>$key->COL ,
+                            "COL 2"=>$key->COL ,
+                            "_links"=>[(object)["href"=>"rumahsakit/{$key->penyakit}",
+                                        "rel"=>"penyakit",
+                                        "type"=>"GET"]]
+                        ];
+                    endforeach;
+        }else{
+            $this->db->where('gejala', $id);
+            $games = $this->db->get('rumahsakit')->result();
+        }
+        $result=["took"=>$_SERVER["REQUEST_TIME_FLOAT"],
+                 "code"=>200,
+                 "message"=>"Response Successfully",
+                 "data"=>$rumahsakit];
+        $this->response($result, 200);
+    }
+
+public function index_post(){
+        $data = array(
+                    'penyakit' => $this->post('penyakit),
+                    'penyebab' => $this->post('penyebab'),
+                    'COL 1 => $this->post('COL 1'),
+                    'COL 2'=>$this->post('COL 2'));
+        $insert = $this->db->insert('rumahsakit', $data);
+        if($insert){
+            $result = ["took" => $_SERVER["REQUEST_TIME_FLOAT"],
+                       "code"=>201,
+                       "message"=>"Data has successfully added",
+                       "data"=>$data];
+            $this->response($result, 201);
+        }else{
+            $result = ["took"=>$_SERVER["REQUEST_TIME_FLOAT"],
+                       "code"=>502,
+                       "message"=>"Failed adding data",
+                       "data"=>null];
+            $this->response($result, 502);
+        }
+		
+		 public function index_post(){
+        $data = array(
+                    'penyakit' => $this->post('penyakit'),
+                    'GamesName' => $this->post('GamesName'),
+                    'Year' => $this->post('Year'),
+                    'DeveloperId'=>$this->post('DeveloperId'));
+        $insert = $this->db->insert('games', $data);
+        if($insert){
+            $result = ["took" => $_SERVER["REQUEST_TIME_FLOAT"],
+                       "code"=>201,
+                       "message"=>"Data has successfully added",
+                       "data"=>$data];
+            $this->response($result, 201);
+        }else{
+            $result = ["took"=>$_SERVER["REQUEST_TIME_FLOAT"],
+                       "code"=>502,
+                       "message"=>"Failed adding data",
+                       "data"=>null];
+            $this->response($result, 502);
+        }
+	function index_put(){
+        $id = $this->get('id');
+        $data = array(
+                    'penyakit' => $this->put('penyakit'),
+                    'gejala' => $this->put('gejala'),
+                    'penyebab' => $this->put('penyebab'),
+                    'DeveloperId' => $this->put('DeveloperId'));
+        $this->db->where('penyakit', $id);
+        $update = $this->db->update('rumahsakit', $data);
+        if($update){
+            $this->response($data, 200);
+        } else{
+            $this->response(array('status' => 'fail', 502));
+        }
+    }
+
+    function index_delete() {
+        $id = $this->get('id');
+        $this->db->where('penyakit', $id);
+        $delete = $this->db->delete('rumahsakit');
+        if ($delete) {
+            $this->response(array('status' => 'success'), 201);
+        } else{
+            $this->response(array('status' => 'fail', 502));
+        }
+    }
+}
+
+?>	
+    }
+    }
+
+}
+?>
+
+
+
+
+
+
+
